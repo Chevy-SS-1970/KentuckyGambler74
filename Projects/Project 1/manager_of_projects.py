@@ -40,7 +40,7 @@ def delete():
         print('You have not created any notes yet. \n')
         return None
     
-    print('List of your notes: ')
+    print('List of your notes: \n')
     for i, n in enumerate(notes, 1):
         print(f'{i}. {n}')
     note_index = int(input('Which note do you want to delete? — '))
@@ -58,7 +58,30 @@ def delete():
 
 
 def search():
-    pass
+    with open('notes.txt', 'r', encoding = 'UTF-8') as file:
+        notes = file.readlines()
+    if not notes:
+        print('You have not created any notes yet. \n')
+        return None
+    
+    notes_found = []
+    search_text = input('Type the search text: ')
+    for i in range(len(notes)):
+        if search_text in notes[i]:
+            notes_found.append(notes[i])
+    
+    lnf = len(notes_found)
+    if lnf != 0:
+        if lnf == 1:
+            word = 'note'
+        else:
+            word = 'notes'
+        print(f'{lnf} {word} found: \n')
+        for i, n in notes_found:
+            print(f"{i}. {n}")
+    else:
+        print('No notes containing this text were found. \n')
+        return None
 
 
 
