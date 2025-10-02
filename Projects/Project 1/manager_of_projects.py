@@ -1,12 +1,12 @@
-def interface():
+def main():
     print('Greetings, my Lord! We praise you.')
     while True:
         print('''What do you want us to do?
                  1. Create a new note
                  2. Delete your note
                  3. Search for a note
-                 4. Close the current note
-                 5. View the note''')
+                 4. View all the notes
+                 5. Exit the program''')
         answer = input()
         match answer:
             case '1':
@@ -16,14 +16,21 @@ def interface():
             case '3':
                 search()
             case '4':
-                close()
-            case '5':
                 view()
+            case '5':
+                print('Farewell, my Lord!')
+                exit()
             case _:
                 print('You should choose a number from the list.')
                 continue
 
-
+def get_notes():
+    with open('notes.txt', 'r', encoding = 'UTF-8') as file:
+        notes = file.readlines()
+    if not notes:
+        print('You have not created any notes yet. \n')
+        return None
+    return notes
 
 def create():
     note = input('Type a new note: ')
@@ -31,19 +38,17 @@ def create():
         file.write(note + '\n')
     print('Your note was successfully created! \n')
 
-
-
 def delete():
-    with open('notes.txt', 'r', encoding = 'UTF-8') as file:
-        notes = file.readlines()
-    if not notes:
-        print('You have not created any notes yet. \n')
+    notes = view(return_notes=True)
+    if notes == None:
         return None
-    
-    print('List of your notes: \n')
-    for i, n in enumerate(notes, 1):
-        print(f'{i}. {n}')
-    note_index = int(input('Which note do you want to delete? — '))
+
+    note_index = input('Which note do you want to delete? — ')
+    if note_index.isdigit() == False:
+        print('You should enter the NUMBER of the note you want to delete.')
+        return None
+    note_index = int(note_index)
+
     if note_index > 0 and len(notes) >= note_index:
         notes_except_deleted = []
         for i in range(len(notes)):
@@ -55,13 +60,9 @@ def delete():
         return None
     print(f'There is no note with number "{note_index}". \n')
 
-
-
 def search():
-    with open('notes.txt', 'r', encoding = 'UTF-8') as file:
-        notes = file.readlines()
-    if not notes:
-        print('You have not created any notes yet. \n')
+    notes = get_notes()
+    if notes == None:
         return None
     
     notes_found = []
@@ -77,18 +78,21 @@ def search():
         else:
             word = 'notes'
         print(f'{lnf} {word} found: \n')
-        for i, n in notes_found:
-            print(f"{i}. {n}")
+        for i, n in enumerate(notes_found, 1):
+            print(f'{i}. {n}')
     else:
         print('No notes containing this text were found. \n')
         return None
 
+def view(return_notes=False):
+    notes = get_notes()
+    if notes == None:
+        return None
+    print('List of your notes: \n')
+    for i, n in enumerate(notes, 1):
+        print(f'{i}. {n}')
+    if return_notes:
+        return notes
 
-
-def close():
-    pass
-
-
-
-def view():
-    pass
+if __name__ == '__main__':
+    main()
