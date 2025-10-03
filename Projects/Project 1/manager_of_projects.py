@@ -1,4 +1,5 @@
-def main():
+# Manager of projects
+def interface():
     print('Greetings, my Lord! We praise you.')
     while True:
         print('''What do you want us to do?
@@ -6,7 +7,8 @@ def main():
                  2. Delete your note
                  3. Search for a note
                  4. View all the notes
-                 5. Exit the program''')
+                 5. Exit the program
+                 6. Delete with keyword''')
         answer = input()
         match answer:
             case '1':
@@ -18,19 +20,24 @@ def main():
             case '4':
                 view()
             case '5':
-                print('Farewell, my Lord!')
-                exit()
+                close()
+            case '6':
+                delete_with_keyword()
             case _:
                 print('You should choose a number from the list.')
                 continue
 
 def get_notes():
-    with open('notes.txt', 'r', encoding = 'UTF-8') as file:
-        notes = file.readlines()
-    if not notes:
-        print('You have not created any notes yet. \n')
+    try:
+        with open('notes.txt', 'r', encoding = 'UTF-8') as file:
+            notes = file.readlines()
+        if not notes:
+            print('You have not created any notes yet. \n')
+            return None
+        return notes
+    except FileNotFoundError:
+        print('File not found!')
         return None
-    return notes
 
 def create():
     note = input('Type a new note: ')
@@ -94,5 +101,27 @@ def view(return_notes=False):
     if return_notes:
         return notes
 
+def delete_with_keyword():
+    notes = get_notes()
+    if notes == None:
+        return None
+
+    keyword = input('I shall delete notes containing this text: ')
+    kill_list = []
+    for i in range(len(notes)):
+        if keyword in notes[i]:
+            kill_list.append(i)
+    k = 0
+    for i in kill_list:
+        notes.remove(notes[i-k])
+        k += 1
+    with open('notes.txt', 'w', encoding = 'UTF-8') as file:
+        file.writelines(notes)
+    print('Each note containing this text was deleted! \n')
+
+def close():
+    print('Farewell, my Lord!')
+    exit()
+
 if __name__ == '__main__':
-    main()
+    interface()
